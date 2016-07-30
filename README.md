@@ -27,7 +27,7 @@
 ## 需求
 * Python 2.7
 	* package: mechanize, json, csv, datetime（主要應該是 mechanize 要特別安裝）
-* 清大網域
+* 清大 VPN 的帳號密碼（若直接在清大網域下則可免）
 * 測試正確運作
 	* Mac OSX（以此開發）
 
@@ -52,6 +52,8 @@
 
 	```
 	{
+		"vpn-username": "YOUR_VPN_ACCOUNT",     <-- VPN帳號
+    	"vpn-userpwd": "YOUR_VPN_PWD",          <-- VPN密碼
 		"username": "YOUR_WORKSTATION_USRNAME", <-- 工作站帳號
 		"userpwd": "YOUR_WORKSTATION_PWD",      <-- 工作站密碼
 		"studentname": "YOUR_NAME"              <-- 你的真實姓名
@@ -61,7 +63,9 @@
 	
 	```
 	{
-		"username": "m1030xxxxx"
+		"vpn-username": "s1030xxxxx@wlan.nthu.edu.tw",
+		"vpn-userpwd": "ㄨㄛˇㄘㄞˊㄅㄨˊㄍㄠˋㄙㄨˋㄋㄧˋㄌㄟˊ",
+		"username": "m1030xxxxx",
 		"userpwd": "ㄨㄛˇㄘㄞˊㄅㄨˊㄍㄠˋㄙㄨˋㄋㄧˋㄌㄟˊ",
 		"studentname": "HW Lee"
 	}
@@ -123,6 +127,8 @@ Updated by HW Lee, 2016.07.30
 * 1.0
 	* 最初版程式
 	* 目前僅在 Mac OSX 上測試
+* 1.1
+	* 新增幫助直接連 VPN
 
 ## 聯絡
 [HW Lee](mailto:tony123930@yahoo.com.tw)
