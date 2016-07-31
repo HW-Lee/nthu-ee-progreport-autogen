@@ -92,12 +92,12 @@
 	```
 	hwlee $ vi var.json
 	hwlee $ vi data.csv
-	hwlee $ python submit.py
+	hwlee $ python submit.py DATA_FILE_NAME[optional, default "data.csv"]
 	Submit Success!
 	hwlee $
 	```
 	
-	成功以後會在網站上看到成果（以 `data-template.csv` 為例）：
+	成功以後會在網站上看到成果（以 `submit.py data-template.csv` 為例）：
 
 	![](./figsrc/result.png)
 
