@@ -1,3 +1,4 @@
+import os
 import json
 
 from flask import Flask, jsonify, abort, request, make_response, url_for
@@ -19,4 +20,5 @@ def post_data():
     return make_response(jsonify(request.form), 200)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
