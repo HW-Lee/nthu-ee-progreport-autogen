@@ -6,7 +6,7 @@ from nthuee_prautogen.rpautogen import ReportManager
 
 app = Flask(__name__, static_url_path = "")
 
-@app.route("", methods=["GET"], strict_slashes=False)
+@app.route("/", methods=["GET"])
 def get_root():
     return ""
 
