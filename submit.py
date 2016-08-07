@@ -1,4 +1,4 @@
-from rpautogen import ReportManager
+from nthuee_prautogen.rpautogen import ReportManager
 import sys
 
 VAR_FILE = "var.json"
