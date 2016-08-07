@@ -6,6 +6,10 @@ from nthuee_prautogen.rpautogen import ReportManager
 
 app = Flask(__name__, static_url_path = "")
 
+@app.route("", methods=["GET"], strict_slashes=False)
+def get_root():
+    return ""
+
 @app.route("/api", methods=["GET"], strict_slashes=False)
 def get_index():
     return make_response("This is the web-service implemented API of nthuee_prautogen.", 200)
