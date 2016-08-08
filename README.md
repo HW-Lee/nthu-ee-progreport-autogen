@@ -162,6 +162,8 @@
 	| data.csv | file       | 同本機端使用的 data.csv |
 	
 	* chrom-extension **Postman** 介面使用如下
+
+		[Postman 介紹](https://chrome.google.com/webstore/detail/postman-rest-client/fdmmgilgnpjigdojojpjoooidkmcomcm)
 	
 	![](figsrc/postman-example.png)
 	
@@ -219,7 +221,9 @@
 	11:53:45 PM web.1 |   * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
 	```
 	
-4. 使用完畢，跳出虛擬環境
+4. 一樣使用 **Postman** ，但是 URL 改成 **localhost:5000/api/post/file**
+	
+5. 使用完畢，跳出虛擬環境
 
 	```
 	hwlee $ deactivate
