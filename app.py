@@ -38,13 +38,15 @@ def post_data():
 
     resp = { "server-connected": False, "data-posted": False, "err-occur": False }
     rpmng = ReportManager(usrvar)
-    if True:
+    try:
         if rpmng.connect_server(): 
             resp["server-connected"] = True
             if rpmng.submit_data(data): resp["data-posted"] = True
 
-    else:
+    except:
         resp["err-occur"] = True
+
+    rpmng.finalize()
 
     return make_response(jsonify(resp), 200)
 

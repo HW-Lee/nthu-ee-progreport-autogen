@@ -26,21 +26,29 @@ class ReportManager(object):
         self.br = mechanize.Browser()
         self.br.set_handle_robots(False)
 
+    def finalize(self):
+        ip = socket.gethostbyname(socket.gethostname())
+        if not ip.startswith(ReportManager.IP_NTHU_PREFIX):
+            self.br.open(ReportManager.VPNURL_LOGOUT)
+
     def connect_server(self):
         if self.rooturl != None: return False
         self.rooturl = ReportManager.ROOTURL
 
         ip = socket.gethostbyname(socket.gethostname())
         if not ip.startswith(ReportManager.IP_NTHU_PREFIX):
-            # Logout the vpn account if needed
-            try: self.br.open(ReportManager.VPNURL_LOGOUT)
-            except: pass
             self.br.open(ReportManager.VPNURL)
             self.br.select_form(name="frmLogin")
             self.br["username"] = self.vpn["usr"]
             self.br["password"] = self.vpn["pwd"]
             self.br.submit()
             self.rooturl = ReportManager.VPN_PREFIX + self.rooturl
+
+            # Checking if there is any unterminated process
+            try: 
+                self.br.select_form(name="frmConfirmation")
+                res = self.br.submit(name="btnContinue")
+            except: pass
 
         self.br.open(self.rooturl + "index.html")
         self.br.select_form(nr=0)
@@ -89,7 +97,7 @@ class ReportManager(object):
             return False
 
     def submit_data(self, data):
-        if True:
+        try:
             data["student"] = self.stuname.encode("big5")
             self.br.open(self.rooturl + "stu_record/message_post.php")
             self.br.select_form(name="form1")
@@ -98,5 +106,5 @@ class ReportManager(object):
 
             return ReportManager.SUCCESS_CHR in res.read().lower()
 
-        else:
+        except:
             return False

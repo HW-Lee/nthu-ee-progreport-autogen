@@ -12,3 +12,5 @@ rpmng = ReportManager(usrvar)
 if rpmng.connect_server():
 	if rpmng.submit_progress(DATA_FILE):
 		print "Submit Success!"
+
+rpmng.finalize()
