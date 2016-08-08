@@ -8,15 +8,13 @@ class ReportManager(object):
     ROOTURL = "http://emgt.ee.nthu.edu.tw/"
     VPNURL = "https://sslvpn.twaren.net/nthu"
     VPNURL_LOGIN_SUCC = "https://sslvpn.twaren.net/dana/home/index.cgi"
+    VPNURL_LOGOUT = "https://sslvpn.twaren.net/dana-na/auth/logout.cgi"
     VPN_PREFIX = "https://sslvpn.twaren.net/dana/home/launch.cgi?url="
     IP_NTHU_PREFIX = "140.114"
     LOGINERR_CHR = "log in error"
     SUCCESS_CHR = "adding success"
 
-    def __init__(self, filename):
-        with open(filename, "r") as f:
-            usrvar = json.load(f)
-
+    def __init__(self, usrvar):
         if "vpn-username" in usrvar.keys() and "vpn-userpwd" in usrvar.keys():
             self.vpn = {"usr": usrvar["vpn-username"], "pwd": usrvar["vpn-userpwd"]}
         else:
@@ -31,8 +29,12 @@ class ReportManager(object):
     def connect_server(self):
         if self.rooturl != None: return False
         self.rooturl = ReportManager.ROOTURL
+
         ip = socket.gethostbyname(socket.gethostname())
         if not ip.startswith(ReportManager.IP_NTHU_PREFIX):
+            # Logout the vpn account if needed
+            try: self.br.open(ReportManager.VPNURL_LOGOUT)
+            except: pass
             self.br.open(ReportManager.VPNURL)
             self.br.select_form(name="frmLogin")
             self.br["username"] = self.vpn["usr"]
@@ -86,4 +88,15 @@ class ReportManager(object):
             print "Error in submitting logs."
             return False
 
+    def submit_data(self, data):
+        if True:
+            data["student"] = self.stuname.encode("big5")
+            self.br.open(self.rooturl + "stu_record/message_post.php")
+            self.br.select_form(name="form1")
+            for k, v in data.items(): self.br[k] = v
+            res = self.br.submit()
 
+            return ReportManager.SUCCESS_CHR in res.read().lower()
+
+        else:
+            return False
