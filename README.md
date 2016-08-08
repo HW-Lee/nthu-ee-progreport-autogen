@@ -258,6 +258,8 @@
 	* 目前僅在 Mac OSX 上測試
 * 1.1
 	* 新增幫助直接連 VPN
+* 2.0
+	* 部署在 heroku 上，支援 RESTful API
 
 ## 聯絡
 [HW Lee](mailto:tony123930@yahoo.com.tw)
