@@ -25,28 +25,42 @@
 並且使用 terminal command `hwlee $ python submit.py`，就可以將此 csv 檔案的內容傳到系統上。
 
 ## 需求
+
+### 終端機上傳
 * Python 2.7
 	* package: mechanize, json, csv, datetime（主要應該是 mechanize 要特別安裝）
 * 清大 VPN 的帳號密碼（若直接在清大網域下則可免）
 * 測試正確運作
 	* Mac OSX（以此開發）
 
+### RESTful API
+* 串接能力（會需要寫程式執行 POST，任何可以透過網路通訊的語言都可以）
+
 ## 檔案架構
 ```
 .
 ├── LICENSE
+├── Procfile
 ├── README.md
-├── data-template.csv                   <-- csv 範例
-├── data.csv                            <-- 真實上傳的 csv
+├── app.py
+├── data-template.csv                     <-- csv 範例
+├── data.csv                              <-- 預設傳遞的 csv
 ├── figsrc
-│   └── prog-record-sys-screenshot.png
+│   ├── prog-record-sys-screenshot.png
+│   └── result-api.png
 │   └── result.png
-├── rpautogen.py                        <-- 開發的上傳管理模組
-├── submit.py                           <-- 命令工具
-└── var.json                            <-- 相關的私密參數
+├── nthuee_prautogen
+│   ├── __init__.py
+│   ├── rpautogen.py                      <-- 開發的上傳管理模組
+├── requirements.txt
+├── runtime.txt
+├── submit.py                             <-- 命令工具
+└── var.json                              <-- 相關的私密參數
 ```
 
-## 使用步驟 
+## 使用方法
+
+### 本機端使用指令上傳
 
 1. 更改 `var.json`
 
@@ -103,6 +117,115 @@
 
 	# 爽RRRRRRRRRRRRRRRRRRRRRR
 
+### RESTful: Post single log
+* SPEC
+	* URL: [https://nthu-ee-progreport-autogen.herokuapp.com/api/post](https://nthu-ee-progreport-autogen.herokuapp.com/api/post)
+	* form
+
+	| fields       | value type | description | example |
+	|--------------|------------|-------------|---------|
+	| vpn-username | string | VPN帳號 | s1030xxxxx@wlan.nthu.edu.tw |
+	| vpn-userpwd  | string |VPN密碼 | ㄨㄛˇㄘㄞˊㄅㄨˊㄍㄠˋㄙㄨˋㄋㄧˋㄌㄟˊ |
+	| username     | string | 工作站帳號 | m1030xxxxx |
+	| userpwd      | string | 工作站密碼 | ㄨㄛˇㄘㄞˊㄅㄨˊㄍㄠˋㄙㄨˋㄋㄧˋㄌㄟˊ |
+	| studentname  | string | 姓名 | 煞氣ㄟHW |
+	| thisweek     | string | 本週完成事項 | Web服務上線 |
+	| nextweek     | string | 下週完成事項 | 領畢業證書囉^^ |
+	| deadline     | string | 預計完成日期 | 2016-08-10 (yyyy-mm-dd) |
+	
+	* returns:
+	
+	```
+	{
+		"data-posted": true,      <-- 是否上傳成功
+		"err-occur": false,       <-- 是否中途出錯
+		"server-connected": true  <-- 是否連接成功
+	}
+	```
+	
+	* 成功新增
+
+	![](figsrc/result-api.png)
+	
+* 備註
+
+	這個選擇主要是降低語言轉換之間的障礙，因此功能其實很陽春，只有一個接口且只能上傳單筆資料。目前在 heroku 上面的效能很差，不太建議使用這個 API。
+
+### RESTful API: POST with files
+* SPEC
+	* URL: [https://nthu-ee-progreport-autogen.herokuapp.com/api/post/file](https://nthu-ee-progreport-autogen.herokuapp.com/api/post/file)
+	* form
+
+	| fields   | value type | description          |
+	|----------|------------|----------------------|
+	| var.json | file       | 同本機端使用的 var.json |
+	| data.csv | file       | 同本機端使用的 data.csv |
+	
+	* chrom-extension **Postman** 介面使用如下
+	
+	![](figsrc/postman-example.png)
+	
+	* returns:
+	
+	```
+	{
+		"data-posted": true,      <-- 是否上傳成功
+		"err-occur": false,       <-- 是否中途出錯
+		"server-connected": true  <-- 是否連接成功
+	}
+	```
+
+* 備註
+
+	此 API 由於 heroku 免費帳戶的限制，效能其實滿差的，光是上傳 `data-template.csv` 就會超時導致 status code 不是 200。幸運的是，經過幾次實際測試，雖然會跳錯誤但仍會有大部份資料都有成功上傳，再去電機系系統上去檢查即可。謹慎上來說，建議上傳的檔案不要太大（可能就 `data-template.csv` 的一半就可以，這沒有實際測試）
+	
+### RESTful API hosted by localhost
+
+為了解決速度極慢的問題，又想使用自己熟悉的語言且認識 RESTful 可以使用的解決方案。
+
+* 需求
+	* Python 2.7.9 (strictly)
+	* pip
+	* python package **"virtualenv"**
+
+1. 將此 repo 下載到自己電腦
+
+	```
+	hwlee $ git clone https://github.com/HW-Lee/nthu-ee-progreport-autogen.git
+	hwlee $ cd nthu-ee-progreport
+	```
+
+2. 設定好環境需求
+
+	```
+	hwlee $ virtualenv venv
+	New python executable in /Users/HWLee/Documents/nthu-ee-progreport-autogen/venv/bin/python
+	Installing setuptools, pip, wheel...done.
+	hwlee $ source ./venv/bin/activate
+	hwlee $ pip install -r requirements.txt
+	```
+	
+3. 將網路服務在本機端開啟
+
+	```
+	hwlee $ python app.py
+	* Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+	```
+	
+	如果有 heroku command line integration (cli) 則可以使用
+	
+	```
+	hwlee $ heroku local web
+	11:53:45 PM web.1 |   * Running on http://0.0.0.0:5000/ (Press CTRL+C to quit)
+	```
+	
+4. 使用完畢，跳出虛擬環境
+
+	```
+	hwlee $ deactivate
+	hwlee $ rm -rf ./venv
+	```
+
 ## 作者的小抱怨
 
 我前陣子才發了一篇 FB 文在抱怨這個詭異的制度，原先想要寫個長篇大論來說服系上停止這個制度，但後來想一下覺得寫一個自動化程式讓他們主動覺得這個制度很沒用好像是個更好的方法。
@@ -121,7 +244,9 @@
 
 我其實最想做的甚至是能夠自動生出 `data.csv`，幫不想填滿的人補足缺的月份。但那個其實滿麻煩的，應該就是一項繁瑣的程式，目前有點懶得寫，因此提供 `data-template.csv` 讓想要懶惰的人直接使用。未來看這個 repo 的使用量來決定要不要提供這個功能好了。
 
-Updated by HW Lee, 2016.07.30
+**----Updated by HW Lee, 2016.08.08----**
+
+不小心又再次手癢，練習把這套工具實作到 Python Flask 並且部署在 heroku 上。如此一來，開了一個接口讓所有會寫程式且懂 RESTful API 的人都可以依照自己的需求自行調整。
 
 ## Release
 * 1.0
