@@ -1,5 +1,6 @@
 import os
 import json
+import csv
 
 from flask import Flask, jsonify, abort, request, make_response, url_for
 
@@ -49,6 +50,33 @@ def post_data():
     rpmng.finalize()
 
     return make_response(jsonify(resp), 200)
+
+@app.route("/api/post/file", methods=["POST"], strict_slashes=False)
+def post_file():
+    if "var.json" in request.files.keys():
+        usrvar = json.load(request.files["var.json"])
+    else:
+        return make_response("no var.json", 200)
+
+    if "data.csv" in request.files.keys():
+        csvfile = request.files["data.csv"]
+
+        resp = { "server-connected": False, "data-posted": False, "err-occur": False }
+        rpmng = ReportManager(usrvar)
+        try:
+            if rpmng.connect_server(): 
+                resp["server-connected"] = True
+                if rpmng.submit_progress(csvfile=csvfile): resp["data-posted"] = True
+
+        except:
+            resp["err-occur"] = True
+
+        rpmng.finalize()
+
+        return make_response(jsonify(resp), 200)
+        
+    else:
+        return make_response("no data.csv", 200)
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))

@@ -10,7 +10,8 @@ with open(VAR_FILE, "r") as f:
 
 rpmng = ReportManager(usrvar)
 if rpmng.connect_server():
-	if rpmng.submit_progress(DATA_FILE):
-		print "Submit Success!"
+    with open(DATA_FILE, "r") as f:
+    	if rpmng.submit_progress(csvfile=f):
+    		print "Submit Success!"
 
 rpmng.finalize()

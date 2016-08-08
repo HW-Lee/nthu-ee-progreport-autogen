@@ -58,11 +58,10 @@ class ReportManager(object):
 
         return not ReportManager.LOGINERR_CHR in res.read().lower()
 
-    def submit_progress(self, filename):
+    def submit_progress(self, csvfile):
         if self.rooturl == None: return False
         try:
-            with open(filename, "r") as f:
-                data = list(csv.reader(f, delimiter=","))
+            data = list(csv.reader(csvfile, delimiter=","))
 
             del data[0]
             data = map(lambda r: {
